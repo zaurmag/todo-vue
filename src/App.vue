@@ -4,13 +4,28 @@
       <app-header />
 
       <main class="todo__body">
-        <form action="#">
-          <div class="tasks">
-            <app-tasks :task="{}" />
-            <app-toggle-btn />
-            <app-tasks-inactive />
+        <div class="tasks">
+          <div class="tasks__active" v-if="tasks.length">
+            <app-tasks :tasks="tasks" />
           </div>
-        </form>
+
+          <div class="row todo__notasks" v-else>
+            <div class="col-10 offset-2">
+              <p>У вас нет активных задач.</p>
+            </div>
+          </div>
+
+          <app-toggle-btn
+            v-if="tasksInactive.length"
+            :count="tasksInactive.length"
+            :show="showInactive"
+            @toggle="showInactive = !showInactive"
+          />
+
+          <div class="tasks__inactive" v-if="showInactive">
+            <app-tasks :tasks="tasksInactive" />
+          </div>
+        </div>
 
         <the-sidebar />
       </main>
@@ -24,20 +39,30 @@
 import AppPage from './components/ui/AppPage'
 import AppHeader from './components/AppHeader'
 import AppTasks from './components/AppTasks'
-import AppTasksInactive from './components/AppTasksInactive'
 import AppToggleBtn from './components/AppToggleBtn'
 import TheSidebar from './components/TheSidebar'
 import AppFooter from './components/AppFooter'
 
+import { useStore } from 'vuex'
+import { computed, ref } from 'vue'
+
 export default {
   name: 'App',
   setup () {
+    const store = useStore()
+    const tasks = computed(() => store.getters.tasksActive)
+    const tasksInactive = computed(() => store.getters.tasksInActive)
+    const showInactive = ref(false)
 
+    return {
+      tasks,
+      tasksInactive,
+      showInactive
+    }
   },
   components: {
     AppPage,
     AppTasks,
-    AppTasksInactive,
     AppToggleBtn,
     TheSidebar,
     AppHeader,

@@ -1,10 +1,15 @@
 <template>
   <div class="row g-0 pt-10">
-    <div class="col-sm-10 offset-sm-2 ps-sm-30 ps-20">
-      <button class="todo__toggle-inactive btn btn-primary btn-sm is-active" type="button">
+    <div class="col-sm-10 offset-sm-2">
+      <button
+        class="todo__toggle-inactive btn btn-primary btn-sm"
+        :class="{'is-active': show}"
+        type="button"
+        @click="$emit('toggle')"
+      >
         <svg class="icon icon-chevron-right">
           <use xlink:href="#chevron-right"></use>
-        </svg>Завершенные<span class="todo__inactive-count">(5)</span>
+        </svg>Завершенные<span class="todo__inactive-count">({{ count }})</span>
       </button>
     </div>
   </div>
@@ -12,6 +17,8 @@
 
 <script>
 export default {
+  emits: ['toggle'],
+  props: ['show', 'count'],
   name: 'AppToggleBtn'
 }
 </script>
