@@ -44,7 +44,7 @@ export default {
     const store = useStore()
 
     return {
-      changeState: id => store.commit('changeState', id)
+      changeState: id => store.commit('change', id)
     }
   }
 }

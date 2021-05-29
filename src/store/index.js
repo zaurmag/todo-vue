@@ -13,9 +13,11 @@ export default createStore({
     addTask (state, task) {
       state.tasks.push(task)
     },
-    changeState (state, id) {
+    change (state, id) {
       const task = state.tasks.find(t => t.id === id)
-      task.state = task.state === 'active' ? 'inactive' : 'active'
+      setTimeout(() => {
+        task.state = task.state === 'active' ? 'inactive' : 'active'
+      }, 50)
     }
   },
   actions: {

@@ -77,7 +77,7 @@ export default {
     }
 
     return {
-      changeState: () => store.commit('changeState', id.value),
+      changeState: () => store.commit('change', id.value),
       remove,
       confirm
     }
