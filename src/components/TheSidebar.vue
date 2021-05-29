@@ -1,5 +1,6 @@
 <template>
-  <aside v-if="task && isVisible" :class="['sidebar', {'is-active': isVisible}]">
+  <transition name="fade">
+    <aside v-if="task && isVisible" :class="['sidebar', {'is-active': isVisible}]">
     <button class="btn sidebar__close" type="button" @click="$emit('close', true)">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
@@ -32,6 +33,7 @@
       @remove="confirm = true"
     />
   </aside>
+  </transition>
 
   <teleport to="#toDo">
     <app-confirm
@@ -94,5 +96,10 @@ export default {
 </script>
 
 <style scoped>
-
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+}
 </style>

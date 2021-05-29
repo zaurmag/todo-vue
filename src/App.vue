@@ -66,7 +66,10 @@ export default {
     const openSB = async id => {
       try {
         oneTask.value = await store.dispatch('loadOne', id)
-        sidebar.value = true
+        sidebar.value = !sidebar.value
+        setTimeout(() => {
+          sidebar.value = true
+        }, 0)
       } catch (e) {
         console.error(e.message)
       }
