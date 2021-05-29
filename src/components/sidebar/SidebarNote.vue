@@ -1,8 +1,8 @@
 <template>
   <form action="#">
-    <div class="field">
+    <div class="form">
       <div class="mb-2">
-        <textarea class="field__input sidebar__task-text" placeholder="Описание задачи"></textarea>
+        <textarea class="form__input sidebar__task-text" placeholder="Описание задачи"></textarea>
       </div>
       <div class="text-end">
         <button class="btn btn-primary btn-sm px-3 text-white" type="button">Добавить</button>

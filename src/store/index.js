@@ -19,6 +19,13 @@ export default createStore({
     }
   },
   actions: {
+    loadOne ({ state }, id) {
+      return state.tasks.find(t => t.id === id)
+    },
+    remove ({ state, commit }, id) {
+      const tasks = state.tasks.filter(t => t.id !== id)
+      commit('setTasks', tasks)
+    }
   },
   getters: {
     tasksActive: state => state.tasks.filter(t => t.state === 'active'),

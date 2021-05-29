@@ -5,11 +5,13 @@
 
       <main class="todo__body">
         <div class="tasks">
-          <div class="tasks__active" v-if="tasks.length">
-            <app-tasks :tasks="tasks" />
-          </div>
+          <app-tasks
+            v-if="tasks.length"
+            :tasks="tasks"
+            @click="openSB"
+          />
 
-          <div class="row todo__notasks" v-else>
+          <div class="row todo__no-tasks" v-else>
             <div class="col-10 offset-2">
               <p>У вас нет активных задач.</p>
             </div>
@@ -22,12 +24,19 @@
             @toggle="showInactive = !showInactive"
           />
 
-          <div class="tasks__inactive" v-if="showInactive">
-            <app-tasks :tasks="tasksInactive" />
-          </div>
+          <app-tasks
+            v-if="showInactive"
+            :tasks="tasksInactive"
+            @click="openSB"
+          />
         </div>
 
-        <the-sidebar />
+        <the-sidebar
+          v-if="oneTask"
+          :task="oneTask"
+          :isVisible="sidebar"
+          @close="closeSB"
+        />
       </main>
 
       <app-footer />
@@ -50,14 +59,34 @@ export default {
   name: 'App',
   setup () {
     const store = useStore()
-    const tasks = computed(() => store.getters.tasksActive)
-    const tasksInactive = computed(() => store.getters.tasksInActive)
     const showInactive = ref(false)
+    const sidebar = ref(false)
+    const oneTask = ref()
+
+    const openSB = async id => {
+      try {
+        oneTask.value = await store.dispatch('loadOne', id)
+        sidebar.value = true
+      } catch (e) {
+        console.error(e.message)
+      }
+    }
 
     return {
-      tasks,
-      tasksInactive,
-      showInactive
+      tasks: computed(() => store.getters.tasksActive),
+      tasksInactive: computed(() => store.getters.tasksInActive),
+      showInactive,
+      openSB,
+      closeSB: value => {
+        if (value) {
+          sidebar.value = false
+        } else {
+          sidebar.value = value
+        }
+        // value ? sidebar.value = false : sidebar.value = value
+      },
+      oneTask,
+      sidebar
     }
   },
   components: {
@@ -70,3 +99,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  #app {
+    height: 100%;
+  }
+</style>
