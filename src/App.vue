@@ -1,6 +1,6 @@
 <template>
   <app-page title="Список задач">
-    <div class="todo">
+    <div id="toDo" class="todo">
       <app-header />
 
       <main class="todo__body">
@@ -83,7 +83,6 @@ export default {
         } else {
           sidebar.value = value
         }
-        // value ? sidebar.value = false : sidebar.value = value
       },
       oneTask,
       sidebar

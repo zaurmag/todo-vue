@@ -26,14 +26,24 @@
 
     <sidebar-footer
       :date="task.date"
-      @remove="remove(task.id)"
+      @remove="confirm = true"
     />
   </aside>
+
+  <teleport to="#toDo">
+    <app-confirm
+      v-if="confirm"
+      title="Вы действительно хотите удалить задачу?"
+      @close="confirm = false"
+      @confirm="remove(task.id)"
+    />
+  </teleport>
 </template>
 
 <script>
 import SidebarNote from './sidebar/SidebarNote'
 import SidebarFooter from './sidebar/SidebarFooter'
+import AppConfirm from './ui/AppConfirm'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 
@@ -54,11 +64,13 @@ export default {
   setup (props, { emit }) {
     const store = useStore()
     const id = ref(props.task ? props.task.id : {})
+    const confirm = ref(false)
 
     const remove = async id => {
       try {
         await store.dispatch('remove', id)
         emit('close', false)
+        confirm.value = false
       } catch (e) {
         console.error(e.message)
       }
@@ -66,12 +78,14 @@ export default {
 
     return {
       changeState: () => store.commit('changeState', id.value),
-      remove
+      remove,
+      confirm
     }
   },
   components: {
     SidebarNote,
-    SidebarFooter
+    SidebarFooter,
+    AppConfirm
   }
 }
 </script>
