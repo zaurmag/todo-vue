@@ -28,6 +28,7 @@ export default createStore({
     }
   },
   getters: {
+    tasksAll: state => state.tasks,
     tasksActive: state => state.tasks.filter(t => t.state === 'active'),
     tasksInActive: state => state.tasks.filter(t => t.state === 'inactive')
   }

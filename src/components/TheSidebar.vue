@@ -33,7 +33,7 @@
   <teleport to="#toDo">
     <app-confirm
       v-if="confirm"
-      title="Вы действительно хотите удалить задачу?"
+      title="Вы действительно хотите удалить?"
       @close="confirm = false"
       @confirm="remove(task.id)"
     />

@@ -1,7 +1,7 @@
 <template>
   <app-page title="Список задач">
     <div id="toDo" class="todo">
-      <app-header />
+      <app-header :count="tasks.length + tasksInactive.length" />
 
       <main class="todo__body">
         <div class="tasks">
