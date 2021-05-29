@@ -1,5 +1,5 @@
 <template>
-  <aside v-if="task" :class="['sidebar', {'is-active': isVisible}]">
+  <aside v-if="task && isVisible" :class="['sidebar', {'is-active': isVisible}]">
     <button class="btn sidebar__close" type="button" @click="$emit('close', true)">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
@@ -21,7 +21,10 @@
         <h2 class="h5 sidebar__tlt" :class="[{'is-inactive': task.state === 'inactive'}]">{{ task.name }}</h2>
       </header>
 
-      <SidebarNote />
+      <SidebarNote
+        :id="task.id"
+        :stateSB="isVisible"
+      />
     </section>
 
     <sidebar-footer

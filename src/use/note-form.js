@@ -2,31 +2,29 @@ import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useStore } from 'vuex'
 
-export function useTaskForm () {
+export function useNoteForm (id) {
   const store = useStore()
   const { handleSubmit, resetForm } = useForm()
-  const { value: name, errorMessage: nError, handleBlur: nBlur } = useField(
-    'name',
+  const { value: desc, errorMessage: dError, handleBlur: dBlur } = useField(
+    'desc',
     yup
       .string()
-      .required('Введите название задачи')
+      .required('Введите описание задачи')
   )
 
   const onSubmit = handleSubmit(value => {
-    store.commit('addTask', {
+    store.commit('addNote', {
+      taskID: id,
       id: Date.now().toString(),
-      date: Date.now(),
-      ...value,
-      state: 'active',
-      notes: []
+      ...value
     })
     resetForm()
   })
 
   return {
-    name,
-    nError,
-    nBlur,
+    desc,
+    dError,
+    dBlur,
     onSubmit
   }
 }
