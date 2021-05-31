@@ -1,13 +1,13 @@
 <template>
   <app-page title="Список задач">
     <div id="toDo" class="todo">
-      <app-header :count="tasks.length + tasksInactive.length" />
+      <app-header :count="tasks.length" />
 
       <main class="todo__body">
         <div class="tasks">
           <app-tasks
-            v-if="tasks.length"
-            :tasks="tasks"
+            v-if="tasksActive.length"
+            :tasks="tasksActive"
             @click="openSB"
           />
 
@@ -62,10 +62,11 @@ export default {
     const showInactive = ref(false)
     const sidebar = ref(false)
     const oneTask = ref()
+    const tasks = computed(() => store.getters.tasks)
 
     const openSB = async id => {
       try {
-        oneTask.value = await store.dispatch('loadOne', id)
+        oneTask.value = await store.getters.taskById(id)
         sidebar.value = !sidebar.value
         setTimeout(() => {
           sidebar.value = true
@@ -76,8 +77,9 @@ export default {
     }
 
     return {
-      tasks: computed(() => store.getters.tasksActive),
-      tasksInactive: computed(() => store.getters.tasksInActive),
+      tasks,
+      tasksActive: computed(() => tasks.value.filter(t => t.state === 'active')),
+      tasksInactive: computed(() => tasks.value.filter(t => t.state === 'inactive')),
       showInactive,
       openSB,
       closeSB: value => {

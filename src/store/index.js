@@ -1,18 +1,16 @@
 import { createStore } from 'vuex'
+const TASKS = 'tasks'
 
 export default createStore({
   state () {
     return {
-      tasks: JSON.parse(localStorage.getItem('tasks')) ?? []
+      tasks: JSON.parse(localStorage.getItem(TASKS)) ?? []
     }
   },
   mutations: {
-    setTasks (state, tasks) {
-      state.tasks = tasks
-      localStorage.setItem('tasks', JSON.stringify(tasks))
-    },
-    addTask (state, task) {
+    add (state, task) {
       state.tasks.push(task)
+      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
     },
     change (state, id) {
       const task = state.tasks.find(t => t.id === id)
@@ -20,35 +18,25 @@ export default createStore({
         task.state = task.state === 'active' ? 'inactive' : 'active'
       }, 50)
     },
+    remove (state, id) {
+      const idx = state.tasks.findIndex(t => t.id === id)
+      state.tasks.splice(idx, 1)
+      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+    },
     addNote (state, note) {
       const task = state.tasks.find(t => t.id === note.taskID)
       task.notes.push(note)
+      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
     },
-    setNotes (state, { id, notes }) {
-      const task = state.tasks.find(t => t.id === id)
-      task.notes = notes
-    }
-  },
-  actions: {
-    loadOne ({ state }, id) {
-      return state.tasks.find(t => t.id === id)
-    },
-    remove ({ state, commit }, id) {
-      const tasks = state.tasks.filter(t => t.id !== id)
-      commit('setTasks', tasks)
-    },
-    removeNote ({ getters, commit }, { taskID, id }) {
-      const notes = getters.taskNotes(taskID).filter(n => n.id !== id)
-      commit('setNotes', {
-        id: taskID,
-        notes
-      })
+    removeNote (state, { taskID, id }) {
+      const notes = state.tasks.find(t => t.id === taskID).notes
+      const index = notes.findIndex(n => n.id === id)
+      notes.splice(index, 1)
+      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
     }
   },
   getters: {
-    tasksAll: state => state.tasks,
-    tasksActive: state => state.tasks.filter(t => t.state === 'active'),
-    tasksInActive: state => state.tasks.filter(t => t.state === 'inactive'),
-    taskNotes: (_, getters) => id => getters.tasksAll.find(t => t.id === id)?.notes
+    tasks: state => state.tasks,
+    taskById: (_, getters) => id => getters.tasks.find(t => t.id === id)
   }
 })

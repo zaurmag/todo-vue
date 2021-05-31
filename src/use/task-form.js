@@ -13,7 +13,7 @@ export function useTaskForm () {
   )
 
   const onSubmit = handleSubmit(value => {
-    store.commit('addTask', {
+    store.commit('add', {
       id: Date.now().toString(),
       date: Date.now(),
       ...value,

@@ -14,8 +14,8 @@ export function useNoteForm (id) {
 
   const onSubmit = handleSubmit(value => {
     store.commit('addNote', {
-      taskID: id,
       id: Date.now().toString(),
+      taskID: id,
       ...value
     })
     resetForm()

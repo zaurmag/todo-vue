@@ -73,7 +73,7 @@ export default {
 
     const remove = async id => {
       try {
-        await store.dispatch('remove', id)
+        await store.commit('remove', id)
         emit('close', false)
         confirm.value = false
       } catch (e) {
