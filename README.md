@@ -1,24 +1,5 @@
 # todo-vue
 
-## Project setup
-```
-npm install
-```
+Простейщее TODO приложение, написанное на фреймворке Vue v.3.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Приложение доступно по адресу - https://todo-5dbc8.web.app
