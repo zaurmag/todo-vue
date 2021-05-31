@@ -3,12 +3,13 @@ import { createStore } from 'vuex'
 export default createStore({
   state () {
     return {
-      tasks: []
+      tasks: JSON.parse(localStorage.getItem('tasks')) ?? []
     }
   },
   mutations: {
     setTasks (state, tasks) {
       state.tasks = tasks
+      localStorage.setItem('tasks', JSON.stringify(tasks))
     },
     addTask (state, task) {
       state.tasks.push(task)

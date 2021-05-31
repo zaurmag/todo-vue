@@ -1,6 +1,6 @@
 <template>
-  <transition name="fade">
-    <aside v-if="task && isVisible" :class="['sidebar', {'is-active': isVisible}]">
+  <transition name="slide-right">
+    <aside v-if="task && isVisible" class="sidebar">
     <button class="btn sidebar__close" type="button" @click="$emit('close', true)">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
@@ -95,11 +95,20 @@ export default {
 }
 </script>
 
-<style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
+<style scoped lang="scss">
+.sidebar {
+  transform: translateX(0);
+  visibility: visible;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
-  opacity: 0;
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transform: translateX(101%);
+  visibility: hidden;
+  transition: transform .2s ease, visibility .2s ease;
+}
+.slide-right-enter,
+.slide-right-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  transform: translateX(101%);
+  visibility: hidden;
 }
 </style>
