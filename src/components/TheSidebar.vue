@@ -1,7 +1,6 @@
 <template>
-  <transition name="slide-right">
-    <aside v-if="task && isVisible" class="sidebar">
-    <button class="btn sidebar__close" type="button" @click="$emit('close', true)">
+  <aside v-if="task" class="sidebar">
+    <button class="btn sidebar__close" type="button" @click="$emit('close')">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
       </svg>
@@ -32,17 +31,16 @@
       :date="task.date"
       @remove="confirm = true"
     />
-  </aside>
-  </transition>
 
-  <teleport to="#toDo">
-    <app-confirm
-      v-if="confirm"
-      title="Вы действительно хотите удалить?"
-      @close="confirm = false"
-      @confirm="remove(task.id)"
-    />
-  </teleport>
+    <teleport to="#toDo">
+      <app-confirm
+        v-if="confirm"
+        title="Вы действительно хотите удалить?"
+        @close="confirm = false"
+        @confirm="remove(task.id)"
+      />
+    </teleport>
+  </aside>
 </template>
 
 <script>
@@ -58,11 +56,6 @@ export default {
     task: {
       type: Object,
       required: true
-    },
-    isVisible: {
-      type: Boolean,
-      required: true,
-      default: false
     }
   },
   emits: ['close'],
@@ -74,7 +67,7 @@ export default {
     const remove = async id => {
       try {
         await store.commit('remove', id)
-        emit('close', false)
+        emit('close')
         confirm.value = false
       } catch (e) {
         console.error(e.message)
@@ -98,17 +91,22 @@ export default {
 <style scoped lang="scss">
 .sidebar {
   transform: translateX(0);
+  opacity: 1;
   visibility: visible;
 }
+
 .slide-right-enter-active,
 .slide-right-leave-active {
-  transform: translateX(101%);
-  visibility: hidden;
-  transition: transform .2s ease, visibility .2s ease;
+  transform: translateX(0);
+  opacity: 1;
+  transition-timing-function: ease-in;
+  transition: transform .3s ease, opacity .4s ease;
 }
-.slide-right-enter,
-.slide-right-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+
+.slide-right-enter-from,
+.slide-right-leave-to {
   transform: translateX(101%);
-  visibility: hidden;
+  opacity: 0;
+  transition-timing-function: ease-out;
 }
 </style>
