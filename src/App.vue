@@ -31,12 +31,13 @@
           />
         </div>
 
-        <the-sidebar
-          v-if="oneTask"
-          :task="oneTask"
-          :isVisible="sidebar"
-          @close="closeSB"
-        />
+        <Transition name="slide-right">
+          <the-sidebar
+            v-if="isSbVisible"
+            :task="oneTask"
+            @close="closeSb"
+          />
+        </Transition>
       </main>
 
       <app-footer />
@@ -60,17 +61,14 @@ export default {
   setup () {
     const store = useStore()
     const showInactive = ref(false)
-    const sidebar = ref(false)
+    const isSbVisible = ref(false)
     const oneTask = ref()
     const tasks = computed(() => store.getters.tasks)
 
     const openSB = async id => {
       try {
         oneTask.value = await store.getters.taskById(id)
-        sidebar.value = !sidebar.value
-        setTimeout(() => {
-          sidebar.value = true
-        }, 0)
+        isSbVisible.value = !isSbVisible.value
       } catch (e) {
         console.error(e.message)
       }
@@ -82,15 +80,11 @@ export default {
       tasksInactive: computed(() => tasks.value.filter(t => t.state === 'inactive')),
       showInactive,
       openSB,
-      closeSB: value => {
-        if (value) {
-          sidebar.value = false
-        } else {
-          sidebar.value = value
-        }
+      closeSb: () => {
+        isSbVisible.value = false
       },
       oneTask,
-      sidebar
+      isSbVisible
     }
   },
   components: {
@@ -104,7 +98,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   #app {
     height: 100%;
   }
