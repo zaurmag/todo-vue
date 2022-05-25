@@ -24,10 +24,6 @@ export default {
     id: {
       type: String,
       required: true
-    },
-    stateSB: {
-      type: Boolean,
-      required: true
     }
   },
   setup (props) {

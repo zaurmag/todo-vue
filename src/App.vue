@@ -33,7 +33,7 @@
 
         <Transition name="slide-right">
           <the-sidebar
-            v-if="isSbVisible"
+            v-if="oneTask && oneTask.isOpen"
             :task="oneTask"
             @close="closeSb"
           />
@@ -61,14 +61,13 @@ export default {
   setup () {
     const store = useStore()
     const showInactive = ref(false)
-    const isSbVisible = ref(false)
-    const oneTask = ref()
+    const oneTask = ref({})
     const tasks = computed(() => store.getters.tasks)
 
     const openSB = async id => {
       try {
+        store.commit('toggleOpen', id)
         oneTask.value = await store.getters.taskById(id)
-        isSbVisible.value = !isSbVisible.value
       } catch (e) {
         console.error(e.message)
       }
@@ -80,11 +79,11 @@ export default {
       tasksInactive: computed(() => tasks.value.filter(t => t.state === 'inactive')),
       showInactive,
       openSB,
-      closeSb: () => {
-        isSbVisible.value = false
+      closeSb: id => {
+        store.commit('toggleOpen', id)
+        oneTask.value = store.getters.taskById(id)
       },
-      oneTask,
-      isSbVisible
+      oneTask
     }
   },
   components: {

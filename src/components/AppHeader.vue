@@ -12,5 +12,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .todo__header {
+    flex-shrink: 0;
+  }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <aside v-if="task" class="sidebar">
-    <button class="btn sidebar__close" type="button" @click="$emit('close')">
+    <button class="btn sidebar__close" type="button" @click="$emit('close', task.id)">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
       </svg>
@@ -8,7 +8,7 @@
 
     <section class="sidebar__top">
       <header class="sidebar__header">
-        <div class="checkbox sidebar__checkbox">
+        <div class="checkbox sidebar__checkbox flex-shrink-0">
           <input
             class="checkbox__input"
             :id="task.id"
@@ -18,12 +18,19 @@
           >
           <label class="checkbox__label" :for="task.id"></label>
         </div>
-        <h2 class="h5 sidebar__tlt" :class="[{'is-inactive': task.state === 'inactive'}]">{{ task.name }}</h2>
+
+        <input
+          class="h5 sidebar__tlt form__input-empty"
+          :class="{'is-inactive': task.state === 'inactive'}"
+          v-model="taskRef.name"
+          @blur="onSubmit"
+          @keydown.enter="onSubmit"
+          type="text"
+        />
       </header>
 
       <SidebarNote
         :id="task.id"
-        :stateSB="isVisible"
       />
     </section>
 
@@ -49,6 +56,7 @@ import SidebarFooter from './sidebar/SidebarFooter'
 import AppConfirm from './ui/AppConfirm'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
+import { useTaskForm } from '@/use/task-form'
 
 export default {
   name: 'TheSidebar',
@@ -63,11 +71,13 @@ export default {
     const store = useStore()
     const id = ref(props.task ? props.task.id : {})
     const confirm = ref(false)
+    const taskRef = ref(props.task)
+    const { onSubmit } = useTaskForm(taskRef.value)
 
     const remove = async id => {
       try {
         await store.commit('remove', id)
-        emit('close')
+        emit('close', id)
         confirm.value = false
       } catch (e) {
         console.error(e.message)
@@ -77,7 +87,9 @@ export default {
     return {
       changeState: () => store.commit('change', id.value),
       remove,
-      confirm
+      confirm,
+      onSubmit,
+      taskRef
     }
   },
   components: {
@@ -89,24 +101,33 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.sidebar {
-  transform: translateX(0);
-  opacity: 1;
-  visibility: visible;
-}
+  .sidebar {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
 
-.slide-right-enter-active,
-.slide-right-leave-active {
-  transform: translateX(0);
-  opacity: 1;
-  transition-timing-function: ease-in;
-  transition: transform .3s ease, opacity .4s ease;
-}
+  .slide-right-enter-active,
+  .slide-right-leave-active {
+    transform: translateX(0);
+    opacity: 1;
+    transition-timing-function: ease-in;
+    transition: transform .3s ease, opacity .4s ease;
+  }
 
-.slide-right-enter-from,
-.slide-right-leave-to {
-  transform: translateX(101%);
-  opacity: 0;
-  transition-timing-function: ease-out;
-}
+  .slide-right-enter-from,
+  .slide-right-leave-to {
+    transform: translateX(101%);
+    opacity: 0;
+    transition-timing-function: ease-out;
+  }
+
+  .form__input-empty {
+    border: none;
+    box-shadow: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
 </style>

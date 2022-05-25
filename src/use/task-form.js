@@ -2,9 +2,10 @@ import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useStore } from 'vuex'
 
-export function useTaskForm () {
+export function useTaskForm (task = {}) {
   const store = useStore()
   const { handleSubmit, resetForm } = useForm()
+
   const { value: name, errorMessage: nError, handleBlur: nBlur } = useField(
     'name',
     yup
@@ -13,13 +14,22 @@ export function useTaskForm () {
   )
 
   const onSubmit = handleSubmit(value => {
-    store.commit('add', {
-      id: Date.now().toString(),
-      date: Date.now(),
-      ...value,
-      state: 'active',
-      notes: []
-    })
+    if (Object.keys(task).length) {
+      store.commit('update', {
+        ...task,
+        name: value.name
+      })
+    } else {
+      store.commit('add', {
+        id: Date.now().toString(),
+        date: Date.now(),
+        ...value,
+        state: 'active',
+        isOpen: false,
+        notes: []
+      })
+    }
+
     resetForm()
   })
 

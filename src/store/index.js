@@ -23,6 +23,18 @@ export default createStore({
       state.tasks.splice(idx, 1)
       localStorage.setItem(TASKS, JSON.stringify(state.tasks))
     },
+    update (state, task) {
+      const idx = state.tasks.findIndex(t => t.id === task.id)
+      state.tasks[idx] = task
+      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+    },
+    toggleOpen (state, id) {
+      const idx = state.tasks.findIndex(t => t.id === id)
+      if (idx !== -1) {
+        state.tasks[idx].isOpen = !state.tasks[idx].isOpen
+        localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+      }
+    },
     addNote (state, note) {
       const task = state.tasks.find(t => t.id === note.taskID)
       task.notes.push(note)
@@ -37,6 +49,7 @@ export default createStore({
   },
   getters: {
     tasks: state => state.tasks.sort((a, b) => b.date - a.date),
-    taskById: (_, getters) => id => getters.tasks.find(t => t.id === id)
+    taskById: (_, getters) => id => getters.tasks.find(t => t.id === id),
+    openTask: (_, getters) => getters.tasks.find(t => t.isOpen === true)
   }
 })
