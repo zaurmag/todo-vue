@@ -36,7 +36,7 @@ export default createStore({
     }
   },
   getters: {
-    tasks: state => state.tasks,
+    tasks: state => state.tasks.sort((a, b) => b.date - a.date),
     taskById: (_, getters) => id => getters.tasks.find(t => t.id === id)
   }
 })
