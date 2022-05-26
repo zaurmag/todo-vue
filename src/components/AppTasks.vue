@@ -19,7 +19,7 @@
       </div>
       <div class="col-sm-10 col task__right">
         <div class="task__title">
-          <a class="task__title-link" href="#" @click.prevent="$emit('click', task.id)">
+          <a class="task__title-link" href="#" @click.prevent="$emit('click', task)">
             <span>{{ task.name }}</span>
           </a>
         </div>

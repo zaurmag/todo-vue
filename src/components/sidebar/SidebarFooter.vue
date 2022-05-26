@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { dateFormat } from '../../utils/date'
+import { dateFormat } from '@/utils/date'
 
 export default {
   name: 'SidebarFooter',

@@ -19,14 +19,17 @@
           <label class="checkbox__label" :for="task.id"></label>
         </div>
 
-        <input
-          class="h5 sidebar__tlt form__input-empty"
-          :class="{'is-inactive': task.state === 'inactive'}"
-          v-model="taskRef.name"
-          @blur="onSubmit"
-          @keydown.enter="onSubmit"
-          type="text"
-        />
+        <div class="sidebar__tlt-wrap">
+          <input
+            class="h5 sidebar__tlt input-empty m-0"
+            :class="{'is-inactive': task.state === 'inactive'}"
+            v-model="name"
+            @blur="onSubmit(); nBlur();"
+            @keydown.enter="onSubmit(); $event.target.blur()"
+            type="text"
+          />
+          <div class="sidebar__tlt-error" v-if="nError">{{ nError }}</div>
+        </div>
       </header>
 
       <SidebarNote
@@ -55,7 +58,7 @@ import SidebarNote from './sidebar/SidebarNote'
 import SidebarFooter from './sidebar/SidebarFooter'
 import AppConfirm from './ui/AppConfirm'
 import { useStore } from 'vuex'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useTaskForm } from '@/use/task-form'
 
 export default {
@@ -71,8 +74,7 @@ export default {
     const store = useStore()
     const id = ref(props.task ? props.task.id : {})
     const confirm = ref(false)
-    const taskRef = ref(props.task)
-    const { onSubmit } = useTaskForm(taskRef.value)
+    const initial = computed(() => props.task)
 
     const remove = async id => {
       try {
@@ -88,8 +90,7 @@ export default {
       changeState: () => store.commit('change', id.value),
       remove,
       confirm,
-      onSubmit,
-      taskRef
+      ...useTaskForm(initial, props.task)
     }
   },
   components: {
@@ -105,6 +106,13 @@ export default {
     transform: translateX(0);
     opacity: 1;
     visibility: visible;
+
+    &__tlt {
+      &-error {
+        color: #ff0014;
+        font-size: 11px;
+      }
+    }
   }
 
   .slide-right-enter-active,
@@ -122,7 +130,7 @@ export default {
     transition-timing-function: ease-out;
   }
 
-  .form__input-empty {
+  .input-empty {
     border: none;
     box-shadow: none;
 

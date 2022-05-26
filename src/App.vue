@@ -8,7 +8,7 @@
           <app-tasks
             v-if="tasksActive.length"
             :tasks="tasksActive"
-            @click="openSB"
+            @click="sidebar = $event"
           />
 
           <div class="row todo__no-tasks" v-else>
@@ -27,14 +27,14 @@
           <app-tasks
             v-if="showInactive"
             :tasks="tasksInactive"
-            @click="openSB"
+            @click="sidebar = $event"
           />
         </div>
 
         <Transition name="slide-right">
           <the-sidebar
-            v-if="oneTask && oneTask.isOpen"
-            :task="oneTask"
+            v-if="sidebar"
+            :task="sidebar"
             @close="closeSb"
           />
         </Transition>
@@ -63,25 +63,28 @@ export default {
     const showInactive = ref(false)
     const oneTask = ref({})
     const tasks = computed(() => store.getters.tasks)
+    const sidebar = ref(null)
 
-    const openSB = async id => {
-      try {
-        store.commit('toggleOpen', id)
-        oneTask.value = await store.getters.taskById(id)
-      } catch (e) {
-        console.error(e.message)
-      }
-    }
+    // const openSB = async id => {
+    //   try {
+    //     store.commit('toggleOpen', id)
+    //     oneTask.value = await store.getters.taskById(id)
+    //   } catch (e) {
+    //     console.error(e.message)
+    //   }
+    // }
 
     return {
       tasks,
       tasksActive: computed(() => tasks.value.filter(t => t.state === 'active')),
       tasksInactive: computed(() => tasks.value.filter(t => t.state === 'inactive')),
       showInactive,
-      openSB,
+      sidebar,
+      // openSB,
       closeSb: id => {
-        store.commit('toggleOpen', id)
-        oneTask.value = store.getters.taskById(id)
+        // store.commit('toggleOpen', id)
+        // oneTask.value = store.getters.taskById(id)
+        sidebar.value = null
       },
       oneTask
     }
