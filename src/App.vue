@@ -34,9 +34,9 @@
         <Transition name="slide-right">
           <the-sidebar
             v-if="sidebar"
-            :task="sidebar"
+            :one-task="sidebar"
             @close="closeSb"
-          />
+           />
         </Transition>
       </main>
 
@@ -61,7 +61,7 @@ export default {
   setup () {
     const store = useStore()
     const showInactive = ref(false)
-    const oneTask = ref({})
+    // const oneTask = ref({})
     const tasks = computed(() => store.getters.tasks)
     const sidebar = ref(null)
 
@@ -85,8 +85,8 @@ export default {
         // store.commit('toggleOpen', id)
         // oneTask.value = store.getters.taskById(id)
         sidebar.value = null
-      },
-      oneTask
+      }
+      // oneTask
     }
   },
   components: {

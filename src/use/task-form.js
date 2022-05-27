@@ -21,7 +21,7 @@ export function useTaskForm (initial, task) {
   })
 
   const onSubmit = handleSubmit(value => {
-    if (task) {
+    if (Object.keys(task).length) {
       store.commit('update', {
         ...task,
         ...value

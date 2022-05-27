@@ -7,6 +7,7 @@
     </button>
 
     <section class="sidebar__top">
+      {{ task }}
       <header class="sidebar__header">
         <div class="checkbox sidebar__checkbox flex-shrink-0">
           <input
@@ -32,9 +33,7 @@
         </div>
       </header>
 
-      <SidebarNote
-        :id="task.id"
-      />
+      <SidebarNote :id="task.id" />
     </section>
 
     <sidebar-footer
@@ -64,7 +63,7 @@ import { useTaskForm } from '@/use/task-form'
 export default {
   name: 'TheSidebar',
   props: {
-    task: {
+    oneTask: {
       type: Object,
       required: true
     }
@@ -72,9 +71,10 @@ export default {
   emits: ['close'],
   setup (props, { emit }) {
     const store = useStore()
-    const id = ref(props.task ? props.task.id : {})
+    const id = ref(props.oneTask ? props.oneTask.id : {})
     const confirm = ref(false)
-    const initial = computed(() => props.task)
+    const initial = computed(() => props.oneTask)
+    const task = ref(initial.value || props.oneTask)
 
     const remove = async id => {
       try {
@@ -87,10 +87,11 @@ export default {
     }
 
     return {
+      task,
       changeState: () => store.commit('change', id.value),
       remove,
       confirm,
-      ...useTaskForm(initial, props.task)
+      ...useTaskForm(initial, task.value)
     }
   },
   components: {
