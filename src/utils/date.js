@@ -1,4 +1,8 @@
 export function dateFormat (date, format = 'date') {
+  if (!date) {
+    return
+  }
+
   const options = {
     year: 'numeric',
     month: 'long',

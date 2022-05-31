@@ -28,11 +28,16 @@ export default createStore({
       state.tasks[idx] = task
       localStorage.setItem(TASKS, JSON.stringify(state.tasks))
     },
-    toggleOpen (state, id) {
+    toggleTask (state, id) {
       const idx = state.tasks.findIndex(t => t.id === id)
+
       if (idx !== -1) {
-        state.tasks[idx].isOpen = !state.tasks[idx].isOpen
+        state.tasks.forEach(item => {
+          item.isOpen = false
+        })
+        state.tasks[idx].isOpen = true
         localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+        console.log(state.tasks[idx].isOpen)
       }
     },
     addNote (state, note) {
@@ -49,6 +54,8 @@ export default createStore({
   },
   getters: {
     tasks: state => state.tasks.sort((a, b) => b.date - a.date),
+    activeTasks: (_, getters) => getters.tasks.filter(t => t.state === 'active'),
+    inActiveTasks: (_, getters) => getters.tasks.filter(t => t.state === 'inactive'),
     taskById: (_, getters) => id => getters.tasks.find(t => t.id === id),
     openTask: (_, getters) => getters.tasks.find(t => t.isOpen === true)
   }

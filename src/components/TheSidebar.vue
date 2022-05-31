@@ -1,5 +1,5 @@
 <template>
-  <aside v-if="task" class="sidebar">
+  <aside class="sidebar">
     <button class="btn sidebar__close" type="button" @click="$emit('close', task.id)">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
@@ -7,7 +7,6 @@
     </button>
 
     <section class="sidebar__top">
-      {{ task }}
       <header class="sidebar__header">
         <div class="checkbox sidebar__checkbox flex-shrink-0">
           <input
@@ -33,7 +32,7 @@
         </div>
       </header>
 
-      <SidebarNote :id="task.id" />
+      <SidebarNote :id="task.id"/>
     </section>
 
     <sidebar-footer
@@ -63,35 +62,50 @@ import { useTaskForm } from '@/use/task-form'
 export default {
   name: 'TheSidebar',
   props: {
-    oneTask: {
+    task: {
       type: Object,
       required: true
     }
   },
-  emits: ['close'],
+  emits: {
+    close: null
+  },
   setup (props, { emit }) {
     const store = useStore()
-    const id = ref(props.oneTask ? props.oneTask.id : {})
+    const id = ref(props.task ? props.task.id : {})
     const confirm = ref(false)
-    const initial = computed(() => props.oneTask)
-    const task = ref(initial.value || props.oneTask)
+    const initial = computed(() => props.task)
+    // let resolveOpen
+    // let rejectClose
 
-    const remove = async id => {
-      try {
-        await store.commit('remove', id)
-        emit('close', id)
-        confirm.value = false
-      } catch (e) {
-        console.error(e.message)
-      }
+    const remove = id => {
+      store.commit('remove', id)
+      emit('close', id)
+      confirm.value = false
     }
 
+    // const open = () => {
+    //   const sbPromise = new Promise((resolve, reject) => {
+    //     resolveOpen = resolve
+    //     rejectClose = reject
+    //   })
+    //
+    //   resolveOpen(true)
+    //
+    //   return sbPromise
+    // }
+    //
+    // const close = () => {
+    //   rejectClose(false)
+    // }
+
     return {
-      task,
+      open,
+      close,
       changeState: () => store.commit('change', id.value),
       remove,
       confirm,
-      ...useTaskForm(initial, task.value)
+      ...useTaskForm(initial, props.task)
     }
   },
   components: {
@@ -103,40 +117,40 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .sidebar {
-    transform: translateX(0);
-    opacity: 1;
-    visibility: visible;
+.sidebar {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
 
-    &__tlt {
-      &-error {
-        color: #ff0014;
-        font-size: 11px;
-      }
+  &__tlt {
+    &-error {
+      color: #ff0014;
+      font-size: 11px;
     }
   }
+}
 
-  .slide-right-enter-active,
-  .slide-right-leave-active {
-    transform: translateX(0);
-    opacity: 1;
-    transition-timing-function: ease-in;
-    transition: transform .3s ease, opacity .4s ease;
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition-timing-function: ease-in;
+  transition: transform .3s ease, opacity .4s ease;
+}
+
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translateX(101%);
+  opacity: 0;
+  transition-timing-function: ease-out;
+}
+
+.input-empty {
+  border: none;
+  box-shadow: none;
+
+  &:focus {
+    outline: none;
   }
-
-  .slide-right-enter-from,
-  .slide-right-leave-to {
-    transform: translateX(101%);
-    opacity: 0;
-    transition-timing-function: ease-out;
-  }
-
-  .input-empty {
-    border: none;
-    box-shadow: none;
-
-    &:focus {
-      outline: none;
-    }
-  }
+}
 </style>

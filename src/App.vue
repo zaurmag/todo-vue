@@ -1,14 +1,14 @@
 <template>
   <app-page title="Список задач">
     <div id="toDo" class="todo">
-      <app-header :count="tasks.length" />
+      <app-header :count="tasks.length"/>
 
       <main class="todo__body">
         <div class="tasks">
           <app-tasks
             v-if="tasksActive.length"
             :tasks="tasksActive"
-            @click="sidebar = $event"
+            @click="toggleSidebar"
           />
 
           <div class="row todo__no-tasks" v-else>
@@ -27,16 +27,17 @@
           <app-tasks
             v-if="showInactive"
             :tasks="tasksInactive"
-            @click="sidebar = $event"
+            @click="toggleSidebar"
           />
         </div>
 
         <Transition name="slide-right">
           <the-sidebar
-            v-if="sidebar"
-            :one-task="sidebar"
+            :ref="refSB"
+            v-if="openTask?.isOpen"
+            :task="openTask"
             @close="closeSb"
-           />
+          />
         </Transition>
       </main>
 
@@ -61,32 +62,41 @@ export default {
   setup () {
     const store = useStore()
     const showInactive = ref(false)
-    // const oneTask = ref({})
     const tasks = computed(() => store.getters.tasks)
-    const sidebar = ref(null)
+    const showSidebar = ref(false)
+    const openTask = computed(() => store.getters.openTask)
+    const refSB = ref()
 
-    // const openSB = async id => {
-    //   try {
-    //     store.commit('toggleOpen', id)
-    //     oneTask.value = await store.getters.taskById(id)
-    //   } catch (e) {
-    //     console.error(e.message)
-    //   }
-    // }
+    const toggleSidebar = task => {
+      // showSidebar.value = !showSidebar.value
+      store.commit('toggleTask', task.id)
+
+      // let result
+      // refSB.value = async event => {
+      //   result = await event.open()
+      //
+      //   if (result) {
+      //     console.log('Open')
+      //   } else {
+      //     console.log('Close')
+      //   }
+      // }
+    }
 
     return {
+      refSB,
       tasks,
-      tasksActive: computed(() => tasks.value.filter(t => t.state === 'active')),
-      tasksInactive: computed(() => tasks.value.filter(t => t.state === 'inactive')),
+      tasksActive: computed(() => store.getters.activeTasks),
+      tasksInactive: computed(() => store.getters.inActiveTasks),
       showInactive,
-      sidebar,
-      // openSB,
+      toggleSidebar,
+      showSidebar,
+      openTask,
       closeSb: id => {
-        // store.commit('toggleOpen', id)
-        // oneTask.value = store.getters.taskById(id)
-        sidebar.value = null
+        store.commit('toggleTask', id)
+        openTask.value = null
+        console.log(openTask.value)
       }
-      // oneTask
     }
   },
   components: {
@@ -101,7 +111,7 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    height: 100%;
-  }
+#app {
+  height: 100%;
+}
 </style>

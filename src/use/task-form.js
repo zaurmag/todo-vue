@@ -3,7 +3,7 @@ import * as yup from 'yup'
 import { useStore } from 'vuex'
 import { watch } from 'vue'
 
-export function useTaskForm (initial, task) {
+export function useTaskForm (initial, task = {}) {
   const store = useStore()
   const { handleSubmit, resetForm, setFieldValue } = useForm()
 
