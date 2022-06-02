@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { useNoteForm } from '../../use/note-form'
+import { useNoteForm } from '@/use/note-form'
 export default {
   name: 'SidebarNoteForm',
   props: ['id'],

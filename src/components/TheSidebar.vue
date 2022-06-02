@@ -8,23 +8,31 @@
 
     <section class="sidebar__top">
       <header class="sidebar__header">
-        <div class="checkbox sidebar__checkbox">
+        <div class="checkbox sidebar__checkbox flex-shrink-0">
           <input
             class="checkbox__input"
             :id="task.id"
             type="checkbox"
-            @change="changeState"
+            @change="changeState(task.id)"
             :checked="task.state === 'inactive'"
           >
           <label class="checkbox__label" :for="task.id"></label>
         </div>
-        <h2 class="h5 sidebar__tlt" :class="[{'is-inactive': task.state === 'inactive'}]">{{ task.name }}</h2>
+
+        <div class="sidebar__tlt-wrap">
+          <input
+            class="h5 sidebar__tlt input-empty m-0"
+            :class="{'is-inactive': task.state === 'inactive'}"
+            v-model="name"
+            @blur="onSubmit(); nBlur();"
+            @keydown.enter="onSubmit(); $event.target.blur()"
+            type="text"
+          />
+          <div class="sidebar__tlt-error" v-if="nError">{{ nError }}</div>
+        </div>
       </header>
 
-      <SidebarNote
-        :id="task.id"
-        :stateSB="isVisible"
-      />
+      <SidebarNote :id="task.id" />
     </section>
 
     <sidebar-footer
@@ -48,36 +56,31 @@ import SidebarNote from './sidebar/SidebarNote'
 import SidebarFooter from './sidebar/SidebarFooter'
 import AppConfirm from './ui/AppConfirm'
 import { useStore } from 'vuex'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useTaskForm } from '@/use/task-form'
 
 export default {
   name: 'TheSidebar',
-  props: {
-    task: {
-      type: Object,
-      required: true
-    }
-  },
+  props: ['id'],
   emits: ['close'],
   setup (props, { emit }) {
     const store = useStore()
-    const id = ref(props.task ? props.task.id : {})
     const confirm = ref(false)
+    const task = computed(() => store.getters.taskById(props.id) || {})
 
-    const remove = async id => {
-      try {
-        await store.commit('remove', id)
-        emit('close')
-        confirm.value = false
-      } catch (e) {
-        console.error(e.message)
-      }
+    const remove = id => {
+      store.commit('remove', id)
+      emit('close')
+      confirm.value = false
     }
 
     return {
-      changeState: () => store.commit('change', id.value),
+      changeState: id => store.commit('change', id),
       remove,
-      confirm
+      confirm,
+      name,
+      task,
+      ...useTaskForm(task)
     }
   },
   components: {
@@ -93,6 +96,13 @@ export default {
   transform: translateX(0);
   opacity: 1;
   visibility: visible;
+
+  &__tlt {
+    &-error {
+      color: #ff0014;
+      font-size: 11px;
+    }
+  }
 }
 
 .slide-right-enter-active,
@@ -108,5 +118,14 @@ export default {
   transform: translateX(101%);
   opacity: 0;
   transition-timing-function: ease-out;
+}
+
+.input-empty {
+  border: none;
+  box-shadow: none;
+
+  &:focus {
+    outline: none;
+  }
 }
 </style>

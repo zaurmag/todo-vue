@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { useTaskForm } from '../use/task-form'
+import { useTaskForm } from '@/use/task-form'
 
 export default {
   name: 'AppFooter',

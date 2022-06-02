@@ -1,14 +1,14 @@
 <template>
   <app-page title="Список задач">
     <div id="toDo" class="todo">
-      <app-header :count="tasks.length" />
+      <app-header :count="tasks.length"/>
 
       <main class="todo__body">
         <div class="tasks">
           <app-tasks
             v-if="tasksActive.length"
             :tasks="tasksActive"
-            @click="openSB"
+            @click="toggleSidebar"
           />
 
           <div class="row todo__no-tasks" v-else>
@@ -27,15 +27,15 @@
           <app-tasks
             v-if="showInactive"
             :tasks="tasksInactive"
-            @click="openSB"
+            @click="toggleSidebar"
           />
         </div>
 
         <Transition name="slide-right">
           <the-sidebar
-            v-if="isSbVisible"
-            :task="oneTask"
-            @close="closeSb"
+            v-if="showSidebar"
+            :id="openTaskID"
+            @close="closeSidebar"
           />
         </Transition>
       </main>
@@ -61,30 +61,28 @@ export default {
   setup () {
     const store = useStore()
     const showInactive = ref(false)
-    const isSbVisible = ref(false)
-    const oneTask = ref()
     const tasks = computed(() => store.getters.tasks)
+    const showSidebar = ref(false)
+    const openTaskID = ref()
+    const currentSidebarID = ref()
 
-    const openSB = async id => {
-      try {
-        oneTask.value = await store.getters.taskById(id)
-        isSbVisible.value = !isSbVisible.value
-      } catch (e) {
-        console.error(e.message)
-      }
+    const toggleSidebar = ({ id }) => {
+      openTaskID.value = id
+      showSidebar.value = id === currentSidebarID.value ? !showSidebar.value : true
+      currentSidebarID.value = id
     }
 
     return {
       tasks,
-      tasksActive: computed(() => tasks.value.filter(t => t.state === 'active')),
-      tasksInactive: computed(() => tasks.value.filter(t => t.state === 'inactive')),
+      tasksActive: computed(() => store.getters.activeTasks),
+      tasksInactive: computed(() => store.getters.inActiveTasks),
       showInactive,
-      openSB,
-      closeSb: () => {
-        isSbVisible.value = false
-      },
-      oneTask,
-      isSbVisible
+      toggleSidebar,
+      showSidebar,
+      openTaskID,
+      closeSidebar: () => {
+        showSidebar.value = false
+      }
     }
   },
   components: {
@@ -99,7 +97,7 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    height: 100%;
-  }
+#app {
+  height: 100%;
+}
 </style>
