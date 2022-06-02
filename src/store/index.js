@@ -28,16 +28,16 @@ export default createStore({
       state.tasks[idx] = task
       localStorage.setItem(TASKS, JSON.stringify(state.tasks))
     },
-    toggleTask (state, id) {
+    toggleTask (state, { id, value }) {
+      console.log(id)
       const idx = state.tasks.findIndex(t => t.id === id)
 
-      if (idx !== -1) {
-        state.tasks.forEach(item => {
-          item.isOpen = false
+      if (idx >= 0) {
+        state.tasks.forEach(task => {
+          task.isOpen = false
         })
-        state.tasks[idx].isOpen = true
+        state.tasks[idx].isOpen = value
         localStorage.setItem(TASKS, JSON.stringify(state.tasks))
-        console.log(state.tasks[idx].isOpen)
       }
     },
     addNote (state, note) {

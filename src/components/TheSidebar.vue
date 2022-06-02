@@ -1,6 +1,6 @@
 <template>
-  <aside class="sidebar">
-    <button class="btn sidebar__close" type="button" @click="$emit('close', task.id)">
+  <aside v-if="task" class="sidebar">
+    <button class="btn sidebar__close" type="button" @click="$emit('close')">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
       </svg>
@@ -13,7 +13,7 @@
             class="checkbox__input"
             :id="task.id"
             type="checkbox"
-            @change="changeState"
+            @change="changeState(task.id)"
             :checked="task.state === 'inactive'"
           >
           <label class="checkbox__label" :for="task.id"></label>
@@ -32,7 +32,7 @@
         </div>
       </header>
 
-      <SidebarNote :id="task.id"/>
+      <SidebarNote :id="task.id" />
     </section>
 
     <sidebar-footer
@@ -61,51 +61,26 @@ import { useTaskForm } from '@/use/task-form'
 
 export default {
   name: 'TheSidebar',
-  props: {
-    task: {
-      type: Object,
-      required: true
-    }
-  },
-  emits: {
-    close: null
-  },
+  props: ['id'],
+  emits: ['close'],
   setup (props, { emit }) {
     const store = useStore()
-    const id = ref(props.task ? props.task.id : {})
     const confirm = ref(false)
-    const initial = computed(() => props.task)
-    // let resolveOpen
-    // let rejectClose
+    const task = computed(() => store.getters.taskById(props.id) || {})
 
     const remove = id => {
       store.commit('remove', id)
-      emit('close', id)
+      emit('close')
       confirm.value = false
     }
 
-    // const open = () => {
-    //   const sbPromise = new Promise((resolve, reject) => {
-    //     resolveOpen = resolve
-    //     rejectClose = reject
-    //   })
-    //
-    //   resolveOpen(true)
-    //
-    //   return sbPromise
-    // }
-    //
-    // const close = () => {
-    //   rejectClose(false)
-    // }
-
     return {
-      open,
-      close,
-      changeState: () => store.commit('change', id.value),
+      changeState: id => store.commit('change', id),
       remove,
       confirm,
-      ...useTaskForm(initial, props.task)
+      name,
+      task,
+      ...useTaskForm(task)
     }
   },
   components: {

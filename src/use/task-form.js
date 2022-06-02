@@ -3,7 +3,7 @@ import * as yup from 'yup'
 import { useStore } from 'vuex'
 import { watch } from 'vue'
 
-export function useTaskForm (initial, task = {}) {
+export function useTaskForm (task) {
   const store = useStore()
   const { handleSubmit, resetForm, setFieldValue } = useForm()
 
@@ -14,17 +14,19 @@ export function useTaskForm (initial, task = {}) {
       .required('Введите название задачи')
   )
 
-  setFieldValue('name', task?.name)
+  setFieldValue('name', task?.value.name)
 
-  watch(initial, ({ name }) => {
-    setFieldValue('name', name)
+  watch(task, task => {
+    if (task) {
+      setFieldValue('name', task.name)
+    }
   })
 
-  const onSubmit = handleSubmit(value => {
-    if (Object.keys(task).length) {
+  const onSubmit = handleSubmit(values => {
+    if (task) {
       store.commit('update', {
-        ...task,
-        ...value
+        ...task.value,
+        ...values
       })
 
       return
@@ -33,9 +35,8 @@ export function useTaskForm (initial, task = {}) {
     store.commit('add', {
       id: Date.now().toString(),
       date: Date.now(),
-      ...value,
+      ...values,
       state: 'active',
-      isOpen: false,
       notes: []
     })
 

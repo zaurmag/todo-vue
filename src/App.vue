@@ -33,10 +33,9 @@
 
         <Transition name="slide-right">
           <the-sidebar
-            :ref="refSB"
-            v-if="openTask?.isOpen"
-            :task="openTask"
-            @close="closeSb"
+            v-if="showSidebar"
+            :id="openTaskID"
+            @close="closeSidebar"
           />
         </Transition>
       </main>
@@ -64,38 +63,25 @@ export default {
     const showInactive = ref(false)
     const tasks = computed(() => store.getters.tasks)
     const showSidebar = ref(false)
-    const openTask = computed(() => store.getters.openTask)
-    const refSB = ref()
+    const openTaskID = ref()
+    const currentSidebarID = ref()
 
-    const toggleSidebar = task => {
-      // showSidebar.value = !showSidebar.value
-      store.commit('toggleTask', task.id)
-
-      // let result
-      // refSB.value = async event => {
-      //   result = await event.open()
-      //
-      //   if (result) {
-      //     console.log('Open')
-      //   } else {
-      //     console.log('Close')
-      //   }
-      // }
+    const toggleSidebar = ({ id }) => {
+      openTaskID.value = id
+      showSidebar.value = id === currentSidebarID.value ? !showSidebar.value : true
+      currentSidebarID.value = id
     }
 
     return {
-      refSB,
       tasks,
       tasksActive: computed(() => store.getters.activeTasks),
       tasksInactive: computed(() => store.getters.inActiveTasks),
       showInactive,
       toggleSidebar,
       showSidebar,
-      openTask,
-      closeSb: id => {
-        store.commit('toggleTask', id)
-        openTask.value = null
-        console.log(openTask.value)
+      openTaskID,
+      closeSidebar: () => {
+        showSidebar.value = false
       }
     }
   },
