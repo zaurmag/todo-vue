@@ -13,7 +13,12 @@
       </div>
       <div class="col-sm-10 col task__right">
         <div class="task__title">
-          <a class="task__title-link" href="#" @click.prevent="$emit('click', task)">
+          <a
+            class="task__title-link"
+            :class="{'is-active': task.id === currentTaskID && sidebar}"
+            href="#"
+            @click.prevent="$emit('click', task)"
+          >
             <span>{{ task.name }}</span>
           </a>
         </div>
@@ -25,6 +30,7 @@
 <script>
 import AppCheckbox from '@/components/ui/AppCheckbox'
 import { useStore } from 'vuex'
+import { computed } from 'vue'
 
 export default {
   name: 'AppTasks',
@@ -37,8 +43,12 @@ export default {
   },
   setup () {
     const store = useStore()
+    const currentTaskID = computed(() => store.getters['sidebar/sidebarCurrentTaskID'] || '')
+    const sidebar = computed(() => store.getters['sidebar/sidebar'] || false)
 
     return {
+      sidebar,
+      currentTaskID,
       changeState: id => store.commit('task/change', id)
     }
   },
@@ -48,6 +58,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .task__title-link {
+    &.is-active {
+      color: #0f93bb;
+    }
+  }
 </style>

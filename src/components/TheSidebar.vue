@@ -26,7 +26,7 @@
         </div>
       </header>
 
-      <sidebar-note :id="task.id" />
+      <sidebar-note :id="task.id" :key="task.id" />
     </section>
 
     <sidebar-footer
@@ -63,7 +63,6 @@ export default {
     const confirm = ref(false)
     const task = computed(() => store.getters['task/taskById'](props.id) || {})
     const sidebar = computed(() => store.getters['sidebar/sidebar'])
-    console.log('Sidebar', sidebar.value)
 
     const remove = id => {
       store.dispatch('task/remove', id)
