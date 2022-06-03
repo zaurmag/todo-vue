@@ -13,7 +13,7 @@ export function useNoteForm (id) {
   )
 
   const onSubmit = handleSubmit(value => {
-    store.commit('addNote', {
+    store.commit('notes/add', {
       id: Date.now().toString(),
       taskID: id,
       ...value

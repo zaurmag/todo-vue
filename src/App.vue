@@ -20,23 +20,19 @@
           <app-toggle-btn
             v-if="tasksInactive.length"
             :count="tasksInactive.length"
-            :show="showInactive"
-            @toggle="showInactive = !showInactive"
+            :show="toggleInactive"
+            @toggle="toggleInactive = !toggleInactive"
           />
 
           <app-tasks
-            v-if="showInactive"
+            v-if="toggleInactive"
             :tasks="tasksInactive"
             @click="toggleSidebar"
           />
         </div>
 
         <Transition name="slide-right">
-          <the-sidebar
-            v-if="showSidebar"
-            :id="openTaskID"
-            @close="closeSidebar"
-          />
+          <the-sidebar :id="openTaskID" />
         </Transition>
       </main>
 
@@ -60,29 +56,22 @@ export default {
   name: 'App',
   setup () {
     const store = useStore()
-    const showInactive = ref(false)
-    const tasks = computed(() => store.getters.tasks)
-    const showSidebar = ref(false)
+    const toggleInactive = ref(false)
+    const tasks = computed(() => store.getters['task/tasks'])
     const openTaskID = ref()
-    const currentSidebarID = ref()
 
     const toggleSidebar = ({ id }) => {
       openTaskID.value = id
-      showSidebar.value = id === currentSidebarID.value ? !showSidebar.value : true
-      currentSidebarID.value = id
+      store.commit('sidebar/open', id)
     }
 
     return {
       tasks,
-      tasksActive: computed(() => store.getters.activeTasks),
-      tasksInactive: computed(() => store.getters.inActiveTasks),
-      showInactive,
+      tasksActive: computed(() => store.getters['task/activeTasks']),
+      tasksInactive: computed(() => store.getters['task/inActiveTasks']),
+      toggleInactive,
       toggleSidebar,
-      showSidebar,
-      openTaskID,
-      closeSidebar: () => {
-        showSidebar.value = false
-      }
+      openTaskID
     }
   },
   components: {

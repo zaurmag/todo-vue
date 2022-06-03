@@ -1,6 +1,6 @@
 <template>
-  <aside v-if="task" class="sidebar">
-    <button class="btn sidebar__close" type="button" @click="$emit('close')">
+  <aside v-if="sidebar" class="sidebar">
+    <button class="btn sidebar__close" type="button" @click="closeSidebar">
       <svg class="icon icon-x-lg">
         <use xlink:href="#x-lg"></use>
       </svg>
@@ -63,24 +63,30 @@ export default {
   name: 'TheSidebar',
   props: ['id'],
   emits: ['close'],
-  setup (props, { emit }) {
+  setup (props) {
     const store = useStore()
     const confirm = ref(false)
-    const task = computed(() => store.getters.taskById(props.id) || {})
+    const task = computed(() => store.getters['task/taskById'](props.id) || {})
+    const sidebar = computed(() => store.getters['sidebar/sidebar'])
+    console.log('Sidebar', sidebar.value)
 
     const remove = id => {
-      store.commit('remove', id)
-      emit('close')
+      store.dispatch('task/remove', id)
+      store.commit('sidebar/close')
       confirm.value = false
     }
 
     return {
-      changeState: id => store.commit('change', id),
+      changeState: id => store.commit('task/change', id),
       remove,
       confirm,
       name,
       task,
-      ...useTaskForm(task)
+      sidebar,
+      ...useTaskForm(task),
+      closeSidebar: () => {
+        store.commit('sidebar/close')
+      }
     }
   },
   components: {
