@@ -1,5 +1,9 @@
 import { TASKS } from '@/constants'
 
+function setLocalstorage (state) {
+  localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+}
+
 export default {
   namespaced: true,
   state () {
@@ -10,22 +14,23 @@ export default {
   mutations: {
     add (state, task) {
       state.tasks.push(task)
-      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+      setLocalstorage(state)
     },
     change (state, id) {
       const task = state.tasks.find(t => t.id === id)
       setTimeout(() => {
         task.state = task.state === 'active' ? 'inactive' : 'active'
+        setLocalstorage(state)
       }, 50)
     },
     remove (state, id) {
       state.tasks = state.tasks.filter(t => t.id !== id)
-      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+      setLocalstorage(state)
     },
     update (state, task) {
       const idx = state.tasks.findIndex(t => t.id === task.id)
       state.tasks[idx] = task
-      localStorage.setItem(TASKS, JSON.stringify(state.tasks))
+      setLocalstorage(state)
     }
   },
   actions: {
