@@ -1,6 +1,6 @@
 <template>
   <footer class="sidebar__footer">
-    <time class="sidebar__date">Создано: {{ dateFormat(date) }}</time>
+    <time class="sidebar__date">Создано: {{ $dateF(date, { month: 'long' }) }}</time>
     <div class="sidebar__remove">
       <a class="sidebar__remove-link" href="#" @click="$emit('remove')">
         <svg class="icon icon-trash">
@@ -12,17 +12,10 @@
 </template>
 
 <script>
-import { dateFormat } from '@/utils/date'
-
 export default {
   name: 'SidebarFooter',
   props: ['date'],
-  emits: ['remove'],
-  setup () {
-    return {
-      dateFormat
-    }
-  }
+  emits: ['remove']
 }
 </script>
 
