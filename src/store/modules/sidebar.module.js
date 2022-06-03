@@ -16,6 +16,7 @@ export default {
     }
   },
   getters: {
-    sidebar: state => state.sidebar
+    sidebar: state => state.sidebar,
+    sidebarCurrentTaskID: state => state.currentSidebarID
   }
 }
