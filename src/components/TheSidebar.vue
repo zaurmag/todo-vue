@@ -8,16 +8,10 @@
 
     <section class="sidebar__top">
       <header class="sidebar__header">
-        <div class="checkbox sidebar__checkbox flex-shrink-0">
-          <input
-            class="checkbox__input"
-            :id="task.id"
-            type="checkbox"
-            @change="changeState(task.id)"
-            :checked="task.state === 'inactive'"
-          >
-          <label class="checkbox__label" :for="task.id"></label>
-        </div>
+        <app-checkbox
+          :class-list="['sidebar__checkbox', 'flex-shrink-0']"
+          :task="task" @change="changeState"
+        />
 
         <div class="sidebar__tlt-wrap">
           <input
@@ -32,7 +26,7 @@
         </div>
       </header>
 
-      <SidebarNote :id="task.id" />
+      <sidebar-note :id="task.id" />
     </section>
 
     <sidebar-footer
@@ -54,6 +48,7 @@
 <script>
 import SidebarNote from './sidebar/SidebarNote'
 import SidebarFooter from './sidebar/SidebarFooter'
+import AppCheckbox from '@/components/ui/AppCheckbox'
 import AppConfirm from './ui/AppConfirm'
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
@@ -92,7 +87,8 @@ export default {
   components: {
     SidebarNote,
     SidebarFooter,
-    AppConfirm
+    AppConfirm,
+    AppCheckbox
   }
 }
 </script>

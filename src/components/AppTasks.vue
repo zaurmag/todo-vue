@@ -6,16 +6,10 @@
   >
     <div class="row gx-sm-30 gx-15 align-items-center">
       <div class="col-sm-2 col-auto task__left">
-        <div class="checkbox task__checkbox">
-          <input
-            class="checkbox__input"
-            :id="task.id"
-            type="checkbox"
-            @change="changeState(task.id)"
-            :checked="task.state === 'inactive'"
-          >
-          <label class="checkbox__label" :for="task.id"></label>
-        </div>
+        <app-checkbox
+          :class-list="['task__checkbox']"
+          :task="task" @change="changeState"
+        />
       </div>
       <div class="col-sm-10 col task__right">
         <div class="task__title">
@@ -29,6 +23,7 @@
 </template>
 
 <script>
+import AppCheckbox from '@/components/ui/AppCheckbox'
 import { useStore } from 'vuex'
 
 export default {
@@ -46,6 +41,9 @@ export default {
     return {
       changeState: id => store.commit('task/change', id)
     }
+  },
+  components: {
+    AppCheckbox
   }
 }
 </script>
