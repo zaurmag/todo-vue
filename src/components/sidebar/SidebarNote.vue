@@ -28,13 +28,10 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const notes = computed(() => store.getters.taskById(props.id)?.notes)
+    const notes = computed(() => store.getters['notes/notesByTaskID'](props.id) || [])
 
     return {
-      remove: id => store.commit('removeNote', {
-        id,
-        taskID: props.id
-      }),
+      remove: id => store.commit('notes/remove', id),
       notes
     }
   },

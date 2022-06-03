@@ -24,7 +24,7 @@ export function useTaskForm (task) {
 
   const onSubmit = handleSubmit(values => {
     if (task) {
-      store.commit('update', {
+      store.commit('task/update', {
         ...task.value,
         ...values
       })
@@ -32,7 +32,7 @@ export function useTaskForm (task) {
       return
     }
 
-    store.commit('add', {
+    store.commit('task/add', {
       id: Date.now().toString(),
       date: Date.now(),
       ...values,

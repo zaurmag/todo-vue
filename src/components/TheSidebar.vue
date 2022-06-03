@@ -66,16 +66,17 @@ export default {
   setup (props, { emit }) {
     const store = useStore()
     const confirm = ref(false)
-    const task = computed(() => store.getters.taskById(props.id) || {})
+    const task = computed(() => store.getters['task/taskById'](props.id) || {})
 
     const remove = id => {
-      store.commit('remove', id)
+      // store.commit('task/remove', id)
+      store.dispatch('task/remove', id)
       emit('close')
       confirm.value = false
     }
 
     return {
-      changeState: id => store.commit('change', id),
+      changeState: id => store.commit('task/change', id),
       remove,
       confirm,
       name,

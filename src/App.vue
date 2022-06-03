@@ -61,7 +61,7 @@ export default {
   setup () {
     const store = useStore()
     const showInactive = ref(false)
-    const tasks = computed(() => store.getters.tasks)
+    const tasks = computed(() => store.getters['task/tasks'])
     const showSidebar = ref(false)
     const openTaskID = ref()
     const currentSidebarID = ref()
@@ -74,8 +74,8 @@ export default {
 
     return {
       tasks,
-      tasksActive: computed(() => store.getters.activeTasks),
-      tasksInactive: computed(() => store.getters.inActiveTasks),
+      tasksActive: computed(() => store.getters['task/activeTasks']),
+      tasksInactive: computed(() => store.getters['task/inActiveTasks']),
       showInactive,
       toggleSidebar,
       showSidebar,
